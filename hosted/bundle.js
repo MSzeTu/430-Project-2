@@ -1,18 +1,85 @@
 "use strict";
 
+var handleThread = function handleThread(e) {
+  //Makes threads, refreshes them
+  e.preventDefault();
+
+  if ($("threadTitle").val() == '' || $("threadText").val() == '') {
+    handleError("Threads must have title and text!");
+    return false;
+  }
+
+  sendAjax('POST', $("#threadForm").attr("action"), $("threadForm").serialize(), function () {
+    loadThreads();
+  });
+};
+
+var loadThreads = function loadThreads() {
+  //loads all threads
+  sendAjax('GET', '/getThreads', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(ThreadList, {
+      threads: data.threads
+    }), document.querySelector("#threads"));
+  });
+};
+
+var threadForm = function threadForm(props) {
+  return /*#__PURE__*/React.createElement("form", {
+    id: "threadForm",
+    onSubmit: handleThread,
+    name: "threadForm",
+    action: "/forum",
+    className: "threadForm"
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: "title"
+  }, "Title: "), /*#__PURE__*/React.createElement("input", {
+    id: "threadTitle",
+    type: "text",
+    name: "title",
+    placeholder: "Thread Title"
+  }), /*#__PURE__*/React.createElement("label", {
+    htmlFor: "text"
+  }, "Text: "), /*#__PURE__*/React.createElement("input", {
+    id: "threadText",
+    type: "text",
+    name: "text",
+    placeholder: "Thread Text"
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "makeThreadSubmit",
+    type: "submit",
+    value: "Start Thread"
+  }));
+};
+"use strict";
+
 var handleDomo = function handleDomo(e) {
   e.preventDefault();
   $("#domoMessage").animate({
     width: 'hide'
   }, 350);
 
-  if ($("domoName").val() == '' || $("#domoAge").val() == '') {
+  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
     handleError("All fields are required!");
     return false;
   }
 
   sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
     loadDomosFromServer();
+  });
+  return false;
+};
+
+var handleThread = function handleThread(e) {
+  //Makes threads, refreshes them
+  e.preventDefault();
+
+  if ($("#threadTitle").val() == '' || $("#threadText").val() == '') {
+    handleError("Threads must have title and text!");
+    return false;
+  }
+
+  sendAjax('POST', $("#threadForm").attr("action"), $("#threadForm").serialize(), function () {
+    loadThreads();
   });
   return false;
 }; //DeleteCode
@@ -66,6 +133,38 @@ var DomoForm = function DomoForm(props) {
     className: "makeDomoSubmit",
     type: "submit",
     value: "Make Domo"
+  }));
+};
+
+var ThreadForm = function ThreadForm(props) {
+  return /*#__PURE__*/React.createElement("form", {
+    id: "threadForm",
+    onSubmit: handleThread,
+    name: "threadForm",
+    action: "/forum",
+    className: "threadForm"
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: "title"
+  }, "Title: "), /*#__PURE__*/React.createElement("input", {
+    id: "threadTitle",
+    type: "text",
+    name: "title",
+    placeholder: "Thread Title"
+  }), /*#__PURE__*/React.createElement("label", {
+    htmlFor: "text"
+  }, "Text: "), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "_csrf",
+    value: props.csrf
+  }), /*#__PURE__*/React.createElement("input", {
+    id: "threadText",
+    type: "text",
+    name: "text",
+    placeholder: "Thread Text"
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "makeThreadSubmit",
+    type: "submit",
+    value: "Start Thread"
   }));
 };
 
@@ -137,6 +236,9 @@ var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(DomoForm, {
     csrf: csrf
   }), document.querySelector("#makeDomo"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(ThreadForm, {
+    csrf: csrf
+  }), document.querySelector("#startThread"));
   ReactDOM.render( /*#__PURE__*/React.createElement(DeleteForm, {
     csrf: csrf
   }), document.querySelector("#deleteDomo"));

@@ -3,7 +3,7 @@ const handleDomo = (e) => {
 
     $("#domoMessage").animate({ width: 'hide' }, 350);
 
-    if ($("domoName").val() == '' || $("#domoAge").val() == '') {
+    if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
         handleError("All fields are required!");
         return false;
     }
@@ -11,6 +11,21 @@ const handleDomo = (e) => {
     sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
         loadDomosFromServer();
     });
+
+    return false;
+};
+
+const handleThread = (e) => { //Makes threads, refreshes them
+    e.preventDefault();
+
+    if ($("#threadTitle").val() == '' || $("#threadText").val() == ''){
+        handleError("Threads must have title and text!");
+        return false;
+    }
+
+    sendAjax('POST', $("#threadForm").attr("action"), $("#threadForm").serialize(), function() {
+        loadThreads();
+    })
 
     return false;
 };
@@ -45,6 +60,24 @@ const DomoForm = (props) => {
             <input id="domoLevel" type="text" name="level" placeholder="Domo Level (>0)" />
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+        </form>
+    );
+};
+
+const ThreadForm = (props) => {
+    return(
+        <form id="threadForm"
+            onSubmit={handleThread}
+            name="threadForm"
+            action="/forum"
+            className="threadForm"
+        >
+            <label htmlFor="title">Title: </label>
+            <input id="threadTitle" type="text" name="title" placeholder="Thread Title" />
+            <label htmlFor="text">Text: </label>
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <input id="threadText" type="text" name="text" placeholder="Thread Text" />
+            <input className="makeThreadSubmit" type="submit" value="Start Thread" />
         </form>
     );
 };
@@ -107,6 +140,10 @@ const loadDomosFromServer = () => {
 const setup = function (csrf) {
     ReactDOM.render(
         <DomoForm csrf={csrf} />, document.querySelector("#makeDomo")
+    );
+
+    ReactDOM.render(
+        <ThreadForm csrf={csrf} />, document.querySelector("#startThread")
     );
 
     ReactDOM.render(
