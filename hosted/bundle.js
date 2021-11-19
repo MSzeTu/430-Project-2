@@ -1,73 +1,6 @@
 "use strict";
 
-var handleThread = function handleThread(e) {
-  //Makes threads, refreshes them
-  e.preventDefault();
-
-  if ($("threadTitle").val() == '' || $("threadText").val() == '') {
-    handleError("Threads must have title and text!");
-    return false;
-  }
-
-  sendAjax('POST', $("#threadForm").attr("action"), $("threadForm").serialize(), function () {
-    loadThreads();
-  });
-};
-
-var loadThreads = function loadThreads() {
-  //loads all threads
-  sendAjax('GET', '/getThreads', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(ThreadList, {
-      threads: data.threads
-    }), document.querySelector("#threads"));
-  });
-};
-
-var threadForm = function threadForm(props) {
-  return /*#__PURE__*/React.createElement("form", {
-    id: "threadForm",
-    onSubmit: handleThread,
-    name: "threadForm",
-    action: "/forum",
-    className: "threadForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "title"
-  }, "Title: "), /*#__PURE__*/React.createElement("input", {
-    id: "threadTitle",
-    type: "text",
-    name: "title",
-    placeholder: "Thread Title"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "text"
-  }, "Text: "), /*#__PURE__*/React.createElement("input", {
-    id: "threadText",
-    type: "text",
-    name: "text",
-    placeholder: "Thread Text"
-  }), /*#__PURE__*/React.createElement("input", {
-    className: "makeThreadSubmit",
-    type: "submit",
-    value: "Start Thread"
-  }));
-};
-"use strict";
-
-var handleDomo = function handleDomo(e) {
-  e.preventDefault();
-  $("#domoMessage").animate({
-    width: 'hide'
-  }, 350);
-
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
-    handleError("All fields are required!");
-    return false;
-  }
-
-  sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
-  });
-  return false;
-};
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var handleThread = function handleThread(e) {
   //Makes threads, refreshes them
@@ -82,61 +15,41 @@ var handleThread = function handleThread(e) {
     loadThreads();
   });
   return false;
-}; //DeleteCode
-
-
-var deleteDomo = function deleteDomo(e) {
-  e.preventDefault();
-  $("#domoMessage").animate({
-    width: 'hide'
-  }, 350);
-  sendAjax('DELETE', $("#deleteForm").attr("action"), $("#deleteForm").serialize(), function () {
-    loadDomosFromServer();
-  });
-  return false;
 };
 
-var DomoForm = function DomoForm(props) {
-  return /*#__PURE__*/React.createElement("form", {
-    id: "domoForm",
-    onSubmit: handleDomo,
-    name: "domoForm",
-    action: "/maker",
-    method: "POST",
-    className: "domoForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "name"
-  }, "Name: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoName",
-    type: "text",
-    name: "name",
-    placeholder: "Domo Name"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "age"
-  }, "Age: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoAge",
-    type: "text",
-    name: "age",
-    placeholder: "Domo Age"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "level"
-  }, "Level: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoLevel",
-    type: "text",
-    name: "level",
-    placeholder: "Domo Level (>0)"
-  }), /*#__PURE__*/React.createElement("input", {
-    type: "hidden",
-    name: "_csrf",
-    value: props.csrf
-  }), /*#__PURE__*/React.createElement("input", {
-    className: "makeDomoSubmit",
-    type: "submit",
-    value: "Make Domo"
-  }));
+var ThreadList = function ThreadList(props) {
+  if (props.threads.length === 0) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "threadList"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "emptyThread"
+    }, "No Threads Found"));
+  }
+
+  var threadNodes = props.threads.map(function (thread) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: thread._id,
+      className: "thread"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "threadTitle"
+    }, thread.title));
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "threadList"
+  }, threadNodes);
+};
+
+var loadThreads = function loadThreads() {
+  sendAjax('GET', '/getThreads', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(ThreadList, {
+      threads: data.threads
+    }), document.querySelector("#threads"));
+  });
 };
 
 var ThreadForm = function ThreadForm(props) {
+  var _React$createElement;
+
   return /*#__PURE__*/React.createElement("form", {
     id: "threadForm",
     onSubmit: handleThread,
@@ -150,103 +63,28 @@ var ThreadForm = function ThreadForm(props) {
     type: "text",
     name: "title",
     placeholder: "Thread Title"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "text"
-  }, "Text: "), /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "_csrf",
     value: props.csrf
-  }), /*#__PURE__*/React.createElement("input", {
-    id: "threadText",
-    type: "text",
-    name: "text",
-    placeholder: "Thread Text"
-  }), /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("textarea", (_React$createElement = {
+    id: "threadText"
+  }, _defineProperty(_React$createElement, "id", "textBox"), _defineProperty(_React$createElement, "name", "text"), _defineProperty(_React$createElement, "placeholder", "Thread Text"), _React$createElement)), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     className: "makeThreadSubmit",
     type: "submit",
     value: "Start Thread"
   }));
 };
 
-var DeleteForm = function DeleteForm(props) {
-  return /*#__PURE__*/React.createElement("form", {
-    id: "deleteForm",
-    onSubmit: deleteDomo,
-    name: "deleteForm",
-    action: "/delete",
-    method: "DELETE",
-    className: "deleteForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "name"
-  }, "Name: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoName",
-    type: "text",
-    name: "name",
-    placeholder: "Domo Name"
-  }), /*#__PURE__*/React.createElement("input", {
-    type: "hidden",
-    name: "_csrf",
-    value: props.csrf
-  }), /*#__PURE__*/React.createElement("input", {
-    className: "deleteSubmit",
-    type: "submit",
-    value: "Delete Domo"
-  }));
-};
-
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "domoList"
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: "emptyDomo"
-    }, "No Domos Yet"));
-  }
-
-  var domoNodes = props.domos.map(function (domo) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: domo._id,
-      className: "domo"
-    }, /*#__PURE__*/React.createElement("img", {
-      src: "/assets/img/domoface.jpeg",
-      alt: "domo face",
-      className: "domoFace"
-    }), /*#__PURE__*/React.createElement("h3", {
-      className: "domoName"
-    }, "Name: ", domo.name), /*#__PURE__*/React.createElement("h3", {
-      className: "domoAge"
-    }, "Age: ", domo.age), /*#__PURE__*/React.createElement("h3", {
-      className: "domoLevel"
-    }, "Level: ", domo.level));
-  });
-  return /*#__PURE__*/React.createElement("div", {
-    className: "domoList"
-  }, domoNodes);
-};
-
-var loadDomosFromServer = function loadDomosFromServer() {
-  sendAjax('GET', '/getDomos', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-      domos: data.domos
-    }), document.querySelector("#domos"));
-  });
-};
-
 var setup = function setup(csrf) {
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoForm, {
-    csrf: csrf
-  }), document.querySelector("#makeDomo"));
   ReactDOM.render( /*#__PURE__*/React.createElement(ThreadForm, {
     csrf: csrf
   }), document.querySelector("#startThread"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DeleteForm, {
-    csrf: csrf
-  }), document.querySelector("#deleteDomo"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
+  ReactDOM.render( /*#__PURE__*/React.createElement(ThreadList, {
     csrf: csrf,
-    domos: []
-  }), document.querySelector("#domos"));
-  loadDomosFromServer();
+    threads: []
+  }), document.querySelector("#threads"));
+  loadThreads();
 };
 
 var getToken = function getToken() {
