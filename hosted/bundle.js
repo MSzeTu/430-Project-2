@@ -30,8 +30,12 @@ var ThreadList = function ThreadList(props) {
     return /*#__PURE__*/React.createElement("div", {
       key: thread._id,
       className: "thread"
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: "threadTitle"
+    }, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "threadTitle",
+      onClick: function onClick() {
+        return openThread(thread);
+      }
     }, thread.title));
   });
   return /*#__PURE__*/React.createElement("div", {
@@ -76,6 +80,30 @@ var ThreadForm = function ThreadForm(props) {
   }));
 };
 
+var Advertisement = function Advertisement(props) {
+  return /*#__PURE__*/React.createElement("div", {
+    id: "ad"
+  }, /*#__PURE__*/React.createElement("h1", null, "This could be your ad! Buy it today!"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "closeAd",
+    onClick: function onClick() {
+      return closeAd();
+    }
+  }, "Close"));
+};
+
+var closeAd = function closeAd() {
+  $('.serverad').animate({
+    bottom: "-60px"
+  }, 600);
+};
+
+var openThread = function openThread(thread) {
+  ReactDOM.render( /*#__PURE__*/React.createElement("div", {
+    id: "currentThread"
+  }, /*#__PURE__*/React.createElement("h1", null, thread.title), /*#__PURE__*/React.createElement("h3", null, "OP: ", thread.ownerUser), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("p", null, thread.text)), document.querySelector("#openThread"));
+};
+
 var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(ThreadForm, {
     csrf: csrf
@@ -84,6 +112,7 @@ var setup = function setup(csrf) {
     csrf: csrf,
     threads: []
   }), document.querySelector("#threads"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(Advertisement, null), document.querySelector(".serverAd"));
   loadThreads();
 };
 
@@ -95,6 +124,9 @@ var getToken = function getToken() {
 
 $(document).ready(function () {
   getToken();
+  $('.serverad').delay(3000).animate({
+    bottom: "30px"
+  }, 600);
 });
 "use strict";
 

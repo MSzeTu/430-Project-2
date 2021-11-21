@@ -1,12 +1,12 @@
 const handleThread = (e) => { //Makes threads, refreshes them
     e.preventDefault();
 
-    if ($("#threadTitle").val() == '' || $("#threadText").val() == ''){
+    if ($("#threadTitle").val() == '' || $("#threadText").val() == '') {
         handleError("Threads must have title and text!");
         return false;
     }
 
-    sendAjax('POST', $("#threadForm").attr("action"), $("#threadForm").serialize(), function() {
+    sendAjax('POST', $("#threadForm").attr("action"), $("#threadForm").serialize(), function () {
         loadThreads();
     })
 
@@ -14,7 +14,7 @@ const handleThread = (e) => { //Makes threads, refreshes them
 };
 
 const ThreadList = function (props) {
-    if(props.threads.length === 0){
+    if (props.threads.length === 0) {
         return (
             <div className="threadList">
                 <h3 className="emptyThread">No Threads Found</h3>
@@ -22,10 +22,13 @@ const ThreadList = function (props) {
         );
     }
 
-    const threadNodes = props.threads.map(function (thread){
-        return(
+    const threadNodes = props.threads.map(function (thread) {
+        return (
             <div key={thread._id} className="thread">
-                <h3 className="threadTitle">{thread.title}</h3>
+                <button type="button" className="threadTitle" onClick={() =>
+                    openThread(thread)
+                }>
+                    {thread.title}</button>
             </div>
         )
     });
@@ -37,7 +40,7 @@ const ThreadList = function (props) {
     )
 };
 
-const loadThreads = () =>{
+const loadThreads = () => {
     sendAjax('GET', '/getThreads', null, (data) => {
         ReactDOM.render(
             <ThreadList threads={data.threads} />, document.querySelector("#threads")
@@ -46,7 +49,7 @@ const loadThreads = () =>{
 };
 
 const ThreadForm = (props) => {
-    return(
+    return (
         <form id="threadForm"
             onSubmit={handleThread}
             name="threadForm"
@@ -64,8 +67,36 @@ const ThreadForm = (props) => {
     );
 };
 
+const Advertisement = (props) => {
+    return (
+        <div id="ad">
+            <h1>This could be your ad! Buy it today!</h1>
+            <button type="button" className="closeAd" onClick={() =>
+                    closeAd()
+                }>
+                    Close</button>
+        </div>
+    );
+};
+
+const closeAd = function (){
+    $('.serverad').animate({bottom:"-60px"},600);
+}
+const openThread = function (thread) {
+    ReactDOM.render(
+        <div id="currentThread">
+            <h1>{thread.title}</h1>
+            <h3>OP: {thread.ownerUser}</h3>
+            <hr></hr>
+            <p>{thread.text}</p>
+        </div>, document.querySelector("#openThread")
+    )
+
+};
+
+
 const setup = function (csrf) {
-    
+
 
     ReactDOM.render(
         <ThreadForm csrf={csrf} />, document.querySelector("#startThread")
@@ -74,6 +105,9 @@ const setup = function (csrf) {
     ReactDOM.render(
         <ThreadList csrf={csrf} threads={[]} />, document.querySelector("#threads")
     );
+    ReactDOM.render(
+        <Advertisement />, document.querySelector(".serverAd")
+    )
     loadThreads();
 
 };
@@ -86,4 +120,5 @@ const getToken = () => {
 
 $(document).ready(function () {
     getToken();
+    $('.serverad').delay(3000).animate({bottom:"30px"},600);
 });

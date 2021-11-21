@@ -18,6 +18,10 @@ const CommentSchema = new mongoose.Schema({
     required: true,
     ref: 'Account',
   },
+  ownerUser: {
+    type: String,
+    required: true,
+  },
 });
 
 const ThreadSchema = new mongoose.Schema({
@@ -38,6 +42,10 @@ const ThreadSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     required: true,
     ref: 'Account',
+  },
+  ownerUser: {
+    type: String,
+    required: true,
   },
 });
 

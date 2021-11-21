@@ -107,6 +107,53 @@ var SignupWindow = function SignupWindow(props) {
   }));
 };
 
+var PassWindow = function PassWindow(props) {
+  return /*#__PURE__*/React.createElement("form", {
+    id: "passForm",
+    name: "passForm" //onSubmit={handleReset}
+    ,
+    action: "/reset",
+    method: "POST",
+    className: "mainForm"
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: "username"
+  }, "Username: "), /*#__PURE__*/React.createElement("input", {
+    id: "user",
+    type: "text",
+    name: "username",
+    placeholder: "username"
+  }), /*#__PURE__*/React.createElement("label", {
+    htmlFor: "oldPass"
+  }, "Old Password: "), /*#__PURE__*/React.createElement("input", {
+    id: "oldPass",
+    type: "password",
+    name: "oldPass",
+    placeholder: "old password"
+  }), /*#__PURE__*/React.createElement("label", {
+    htmlFor: "pass"
+  }, "New Password: "), /*#__PURE__*/React.createElement("input", {
+    id: "pass",
+    type: "password",
+    name: "pass",
+    placeholder: "password"
+  }), /*#__PURE__*/React.createElement("label", {
+    htmlFor: "pass2"
+  }, "Password: "), /*#__PURE__*/React.createElement("input", {
+    id: "pass2",
+    type: "password",
+    name: "pass2",
+    placeholder: "retype password"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "_csrf",
+    value: props.csrf
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "passSubmit",
+    type: "submit",
+    value: "Change Password"
+  }));
+};
+
 var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
     csrf: csrf
@@ -119,12 +166,24 @@ var createSignupWindow = function createSignupWindow(csrf) {
   }), document.querySelector("#content"));
 };
 
+var createPassWindow = function createPassWindow(csrf) {
+  ReactDOM.render( /*#__PURE__*/React.createElement(PassWindow, {
+    csrf: csrf
+  }), document.querySelector("#content"));
+};
+
 var setup = function setup(csrf) {
   var loginButton = document.querySelector("#loginButton");
   var signupButtom = document.querySelector("#signupButton");
+  var passButton = document.querySelector("#passButton");
   signupButton.addEventListener("click", function (e) {
     e.preventDefault();
     createSignupWindow(csrf);
+    return false;
+  });
+  passButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createPassWindow(csrf);
     return false;
   });
   createLoginWindow(csrf); //default view

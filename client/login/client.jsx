@@ -75,6 +75,29 @@ const SignupWindow = (props) => {
     );
 };
 
+const PassWindow = (props) => {
+    return (
+        <form id="passForm"
+            name="passForm"
+            //onSubmit={handleReset}
+            action="/reset"
+            method="POST"
+            className="mainForm"
+        >
+            <label htmlFor="username">Username: </label>
+            <input id="user" type="text" name="username" placeholder="username" />
+            <label htmlFor="oldPass">Old Password: </label>
+            <input id="oldPass" type="password" name="oldPass" placeholder="old password" />
+            <label htmlFor="pass">New Password: </label>
+            <input id="pass" type="password" name="pass" placeholder="password" />
+            <label htmlFor="pass2">Password: </label>
+            <input id="pass2" type="password" name="pass2" placeholder="retype password" />
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <input className="passSubmit" type="submit" value="Change Password" />
+        </form>
+    );
+}
+
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
         <LoginWindow csrf={csrf} />,
@@ -89,15 +112,29 @@ const createSignupWindow = (csrf) => {
     );
 };
 
+const createPassWindow = (csrf) => {
+    ReactDOM.render(
+        <PassWindow csrf={csrf} />,
+        document.querySelector("#content")
+    );
+};
+
 const setup = (csrf) => {
     const loginButton = document.querySelector("#loginButton");
     const signupButtom = document.querySelector("#signupButton");
+    const passButton = document.querySelector("#passButton")
 
     signupButton.addEventListener("click", (e) => {
         e.preventDefault();
         createSignupWindow(csrf);
         return false;
     });
+
+    passButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        createPassWindow(csrf);
+        return false;
+    }); 
 
     createLoginWindow(csrf); //default view
 };

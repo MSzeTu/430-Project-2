@@ -17,10 +17,12 @@ const startThread = (req, res) => {
     return res.status(400).json({ error: 'Thread name and content required' });
   }
 
+  console.log(req);
   const threadData = {
     title: req.body.title,
     text: req.body.text,
     owner: req.session.account._id,
+    ownerUser: req.session.account.username,
   };
 
   const newThread = new Thread.ThreadModel(threadData);
