@@ -51,6 +51,16 @@ var loadThreads = function loadThreads() {
   });
 };
 
+var loadUser = function loadUser() {
+  sendAjax('GET', '/getUser', null, function (data) {
+    var title = document.querySelector("#title");
+    title.innerHTML += ", ".concat(data.username, "!");
+    ReactDOM.render( /*#__PURE__*/React.createElement("h3", {
+      id: "userDisplay"
+    }, "Logged in as: ", data.username), document.querySelector("#userDisplay"));
+  });
+};
+
 var ThreadForm = function ThreadForm(props) {
   var _React$createElement;
 
@@ -114,6 +124,7 @@ var setup = function setup(csrf) {
   }), document.querySelector("#threads"));
   ReactDOM.render( /*#__PURE__*/React.createElement(Advertisement, null), document.querySelector(".serverAd"));
   loadThreads();
+  loadUser();
 };
 
 var getToken = function getToken() {

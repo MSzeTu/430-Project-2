@@ -9,14 +9,12 @@ var handleLogin = function handleLogin(e) {
     return false;
   }
 
-  console.log($("input[name=_csrf").val());
   sendAjax('Post', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
   return false;
 };
 
 var handleSignup = function handleSignup(e) {
   e.preventDefault();
-  console.log($("#pass2").val());
 
   if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
     //Code here for fields missing error
@@ -31,6 +29,25 @@ var handleSignup = function handleSignup(e) {
   }
 
   sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
+  return false;
+};
+
+var handleReset = function handleReset(e) {
+  e.preventDefault();
+
+  if ($("#user").val() == '' || $("#oldPass").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
+    //Code here for fields missing error
+    handleError("Missing Fields");
+    return false;
+  }
+
+  if ($("#pass").val() !== $("#pass2").val()) {
+    //Code here for password not matching error
+    handleError("Passwords do not match");
+    return false;
+  }
+
+  sendAjax('POST', $("#passForm").attr("action"), $("#passForm").serialize(), redirect);
   return false;
 };
 
@@ -110,8 +127,8 @@ var SignupWindow = function SignupWindow(props) {
 var PassWindow = function PassWindow(props) {
   return /*#__PURE__*/React.createElement("form", {
     id: "passForm",
-    name: "passForm" //onSubmit={handleReset}
-    ,
+    name: "passForm",
+    onSubmit: handleReset,
     action: "/reset",
     method: "POST",
     className: "mainForm"

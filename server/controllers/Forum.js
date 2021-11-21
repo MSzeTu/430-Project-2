@@ -17,7 +17,6 @@ const startThread = (req, res) => {
     return res.status(400).json({ error: 'Thread name and content required' });
   }
 
-  console.log(req);
   const threadData = {
     title: req.body.title,
     text: req.body.text,
@@ -37,12 +36,11 @@ const startThread = (req, res) => {
 
     return res.status(400).json({ error: 'An error occured' });
   });
-  res.status(200).json({message: "worked"});
+  res.status(200).json({ message: 'worked' });
   return threadPromise;
 };
 
 const listThreads = (request, response) => {
-  const req = request;
   const res = response;
 
   return Thread.ThreadModel.getAll((err, docs) => {

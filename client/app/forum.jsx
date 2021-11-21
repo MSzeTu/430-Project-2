@@ -48,6 +48,16 @@ const loadThreads = () => {
     });
 };
 
+const loadUser = () => {
+    sendAjax('GET', '/getUser', null, (data) => {
+        let title = document.querySelector("#title");
+        title.innerHTML += `, ${data.username}!`;
+        ReactDOM.render(
+            <h3 id="userDisplay">Logged in as: {data.username}</h3>, document.querySelector("#userDisplay")
+        );
+    });
+};
+
 const ThreadForm = (props) => {
     return (
         <form id="threadForm"
@@ -94,9 +104,7 @@ const openThread = function (thread) {
 
 };
 
-
 const setup = function (csrf) {
-
 
     ReactDOM.render(
         <ThreadForm csrf={csrf} />, document.querySelector("#startThread")
@@ -109,7 +117,7 @@ const setup = function (csrf) {
         <Advertisement />, document.querySelector(".serverAd")
     )
     loadThreads();
-
+    loadUser();
 };
 
 const getToken = () => {

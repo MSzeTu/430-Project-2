@@ -9,8 +9,6 @@ const handleLogin = (e) => {
         return false;
     }
 
-    console.log($("input[name=_csrf").val());
-
     sendAjax('Post', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
     return false;
 };
@@ -18,8 +16,6 @@ const handleLogin = (e) => {
 const handleSignup = (e) => {
     e.preventDefault();
 
-
-    console.log($("#pass2").val());
     if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
         //Code here for fields missing error
         handleError("Missing Fields");
@@ -33,6 +29,25 @@ const handleSignup = (e) => {
     }
 
     sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
+    return false;
+};
+
+const handleReset = (e) => {
+    e.preventDefault();
+
+    if ($("#user").val() == '' || $("#oldPass").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
+        //Code here for fields missing error
+        handleError("Missing Fields");
+        return false;
+    }
+
+    if ($("#pass").val() !== $("#pass2").val()) {
+        //Code here for password not matching error
+        handleError("Passwords do not match");
+        return false;
+    }
+
+    sendAjax('POST', $("#passForm").attr("action"), $("#passForm").serialize(), redirect);
     return false;
 };
 
@@ -79,7 +94,7 @@ const PassWindow = (props) => {
     return (
         <form id="passForm"
             name="passForm"
-            //onSubmit={handleReset}
+            onSubmit={handleReset}
             action="/reset"
             method="POST"
             className="mainForm"
@@ -134,7 +149,7 @@ const setup = (csrf) => {
         e.preventDefault();
         createPassWindow(csrf);
         return false;
-    }); 
+    });
 
     createLoginWindow(csrf); //default view
 };
@@ -145,6 +160,6 @@ const getToken = () => {
     });
 };
 
-$(document).ready(function() {
+$(document).ready(function () {
     getToken();
 });

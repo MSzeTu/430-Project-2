@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
-const _ = require('underscore');
+//const _ = require('underscore');
 
 let ThreadModel = {};
 let CommentModel = {};
@@ -75,6 +75,6 @@ ThreadSchema.statics.delete = (namef, callback) => { // Calls the delete functio
 ThreadModel = mongoose.model('Thread', ThreadSchema);
 CommentModel = mongoose.model('Comment', CommentSchema);
 module.exports.ThreadModel = ThreadModel;
-module.exports.DomoSchema = ThreadSchema;
+module.exports.ThreadSchema = ThreadSchema;
 module.exports.CommentModel = CommentModel;
 module.exports.CommentSchema = CommentSchema;
