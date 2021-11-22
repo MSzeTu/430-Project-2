@@ -13,7 +13,7 @@ const handleThread = (e) => { //Makes threads, refreshes them
     return false;
 };
 
-const ThreadList = function (props) {
+const ThreadList = function (props) { //Lists out all active threads
     if (props.threads.length === 0) {
         return (
             <div className="threadList">
@@ -22,7 +22,7 @@ const ThreadList = function (props) {
         );
     }
 
-    const threadNodes = props.threads.map(function (thread) {
+    const threadNodes = props.threads.map(function (thread) { //Indiviudal nodes
         return (
             <div key={thread._id} className="thread">
                 <button type="button" className="threadTitle" onClick={() =>
@@ -40,7 +40,7 @@ const ThreadList = function (props) {
     )
 };
 
-const loadThreads = () => {
+const loadThreads = () => { //Loads up the threads
     sendAjax('GET', '/getThreads', null, (data) => {
         ReactDOM.render(
             <ThreadList threads={data.threads} />, document.querySelector("#threads")
@@ -48,7 +48,7 @@ const loadThreads = () => {
     });
 };
 
-const loadUser = () => {
+const loadUser = () => { //Loads the current user so we can get their name
     sendAjax('GET', '/getUser', null, (data) => {
         let title = document.querySelector("#title");
         title.innerHTML += `, ${data.username}!`;
@@ -58,7 +58,7 @@ const loadUser = () => {
     });
 };
 
-const ThreadForm = (props) => {
+const ThreadForm = (props) => { //Form for creating threads
     return (
         <form id="threadForm"
             onSubmit={handleThread}
@@ -77,7 +77,7 @@ const ThreadForm = (props) => {
     );
 };
 
-const Advertisement = (props) => {
+const Advertisement = (props) => { //Popup ad, buy today!
     return (
         <div id="ad">
             <h1>This could be your ad! Buy it today!</h1>
@@ -89,22 +89,41 @@ const Advertisement = (props) => {
     );
 };
 
-const closeAd = function (){
+const closeAd = function (){ //Closes the ad
     $('.serverad').animate({bottom:"-60px"},600);
 }
-const openThread = function (thread) {
+
+const openThread = function (thread) { //Opens the selected thread
     ReactDOM.render(
         <div id="currentThread">
             <h1>{thread.title}</h1>
             <h3>OP: {thread.ownerUser}</h3>
+            <h3>Rating: {thread.rating}</h3>
             <hr></hr>
+            <button type="button" className="voteButton" onClick={() =>
+                    upVote(thread, true)
+                }>Upvote</button>
+            <button type="button" className="voteButton" onClick={() =>
+                    downVote(thread, false)
+                }>Downvote</button>
             <p>{thread.text}</p>
         </div>, document.querySelector("#openThread")
     )
-
 };
 
-const setup = function (csrf) {
+const upVote = function (thread) { //Upvotes the open thread
+    sendAjax('GET', '/upVote', thread, (threadReturned) => {
+        openThread(threadReturned);
+    });
+};
+
+const downVote = function (thread) { //Downvotes the open thread
+    sendAjax('GET', '/downVote', thread, (threadReturned) => {
+        openThread(threadReturned);
+    });
+};
+
+const setup = function (csrf) { //Sets up the page
 
     ReactDOM.render(
         <ThreadForm csrf={csrf} />, document.querySelector("#startThread")
@@ -120,13 +139,13 @@ const setup = function (csrf) {
     loadUser();
 };
 
-const getToken = () => {
+const getToken = () => { //Gets the csrf token
     sendAjax('GET', '/getToken', null, (result) => {
         setup(result.csrfToken);
     });
 };
 
-$(document).ready(function () {
+$(document).ready(function () { //animates the ad after some time
     getToken();
     $('.serverad').delay(3000).animate({bottom:"30px"},600);
 });

@@ -1,10 +1,8 @@
-const handleLogin = (e) => {
+const handleLogin = (e) => { //Handles logins
     e.preventDefault();
 
-
-
-    if ($("user").val() == '' || $("#pass").val() == '') {
-        //Code here for empty error
+    //Checks for empty fields
+    if ($("user").val() == '' || $("#pass").val() == '') { 
         handleError("Username or password is empty");
         return false;
     }
@@ -13,17 +11,16 @@ const handleLogin = (e) => {
     return false;
 };
 
-const handleSignup = (e) => {
+const handleSignup = (e) => { //handles signups
     e.preventDefault();
 
     if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-        //Code here for fields missing error
         handleError("Missing Fields");
         return false;
     }
 
+    //checks for matching passwords
     if ($("#pass").val() !== $("#pass2").val()) {
-        //Code here for password not matching error
         handleError("Passwords do not match");
         return false;
     }
@@ -32,17 +29,17 @@ const handleSignup = (e) => {
     return false;
 };
 
-const handleReset = (e) => {
+const handleReset = (e) => { //Handles password resets
     e.preventDefault();
 
+    //Checks for empty fields
     if ($("#user").val() == '' || $("#oldPass").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-        //Code here for fields missing error
         handleError("Missing Fields");
         return false;
     }
 
+    //Checks for matching passwords
     if ($("#pass").val() !== $("#pass2").val()) {
-        //Code here for password not matching error
         handleError("Passwords do not match");
         return false;
     }
@@ -51,7 +48,7 @@ const handleReset = (e) => {
     return false;
 };
 
-const LoginWindow = (props) => {
+const LoginWindow = (props) => { //Window for user login
     return (
         <form id="loginForm" name="loginForm"
             onSubmit={handleLogin}
@@ -69,7 +66,7 @@ const LoginWindow = (props) => {
     );
 };
 
-const SignupWindow = (props) => {
+const SignupWindow = (props) => { //Window for signup
     return (
         <form id="signupForm"
             name="signupForm"
@@ -90,7 +87,7 @@ const SignupWindow = (props) => {
     );
 };
 
-const PassWindow = (props) => {
+const PassWindow = (props) => { //Window for Password reset
     return (
         <form id="passForm"
             name="passForm"
@@ -113,28 +110,28 @@ const PassWindow = (props) => {
     );
 }
 
-const createLoginWindow = (csrf) => {
+const createLoginWindow = (csrf) => { //Creates login window
     ReactDOM.render(
         <LoginWindow csrf={csrf} />,
         document.querySelector("#content")
     );
 };
 
-const createSignupWindow = (csrf) => {
+const createSignupWindow = (csrf) => { //Creates signup window
     ReactDOM.render(
         <SignupWindow csrf={csrf} />,
         document.querySelector("#content")
     );
 };
 
-const createPassWindow = (csrf) => {
+const createPassWindow = (csrf) => { //creates password reset window
     ReactDOM.render(
         <PassWindow csrf={csrf} />,
         document.querySelector("#content")
     );
 };
 
-const setup = (csrf) => {
+const setup = (csrf) => { //Sets up the page
     const loginButton = document.querySelector("#loginButton");
     const signupButtom = document.querySelector("#signupButton");
     const passButton = document.querySelector("#passButton")
@@ -154,12 +151,12 @@ const setup = (csrf) => {
     createLoginWindow(csrf); //default view
 };
 
-const getToken = () => {
+const getToken = () => { //Gets CSRF token
     sendAjax('GET', '/getToken', null, (result) => {
         setup(result.csrfToken);
     });
 };
 
-$(document).ready(function () {
+$(document).ready(function () { //runs on doc ready
     getToken();
 });

@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
-//const _ = require('underscore');
+// const _ = require('underscore');
 
 let ThreadModel = {};
 let CommentModel = {};
 
 const convertId = mongoose.Types.ObjectId;
 
+//Schema for comments
 const CommentSchema = new mongoose.Schema({
   text: {
     type: String,
@@ -24,6 +25,7 @@ const CommentSchema = new mongoose.Schema({
   },
 });
 
+//Schema for Threads
 const ThreadSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -38,6 +40,11 @@ const ThreadSchema = new mongoose.Schema({
   replies: {
     type: [CommentSchema],
   },
+  rating: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
@@ -49,6 +56,7 @@ const ThreadSchema = new mongoose.Schema({
   },
 });
 
+//Finds Thread by owners
 ThreadSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId),
@@ -57,17 +65,20 @@ ThreadSchema.statics.findByOwner = (ownerId, callback) => {
   return ThreadModel.find(search).select('name text').lean().exec(callback);
 };
 
+//Gets all threads
 ThreadSchema.statics.getAll = (callback) => {
   ThreadModel.find(callback).lean();
 };
 
-ThreadSchema.statics.findByName = (namef, callback) => {
+//Gets a thread by name
+ThreadSchema.statics.findByName = (title, callback) => {
   const search = {
-    namef,
+    title,
   };
   return ThreadModel.findOne(search).exec(callback);
 };
 
+//Deletes a thread (not implemented)
 ThreadSchema.statics.delete = (namef, callback) => { // Calls the delete function
   ThreadModel.deleteOne({ name: namef }).exec(callback);
 };

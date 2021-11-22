@@ -2,6 +2,7 @@ const models = require('../models');
 
 const { Thread } = models;
 
+//Renders the main forum page
 const forumPage = (req, res) => {
   Thread.ThreadModel.getAll((err, docs) => {
     if (err) {
@@ -12,6 +13,7 @@ const forumPage = (req, res) => {
   });
 };
 
+//Creates a new thread
 const startThread = (req, res) => {
   if (!req.body.title || !req.body.text) {
     return res.status(400).json({ error: 'Thread name and content required' });
@@ -40,6 +42,44 @@ const startThread = (req, res) => {
   return threadPromise;
 };
 
+//Changes the vote on the open thread
+const changeVote = (request, response, voteType) => {
+  const req = request;
+  const res = response;
+  return Thread.ThreadModel.findByName(req.query.title, (err, doc) => {
+    if (err) {
+      return res.status(500).json({ err });
+    }
+    if (!doc) {
+      return res.json({ error: 'Thread not found' });
+    }
+    const newThread = doc;
+    if (voteType === true) {
+      newThread.rating++;
+    } else {
+      newThread.rating--;
+    }
+    const savePromise = newThread.save();
+    savePromise.then(() => res.json({
+      title: newThread.title,
+      text: newThread.text,
+      replies: newThread.replies,
+      rating: newThread.rating,
+      owner: newThread.owner,
+      ownerUser: newThread.ownerUser,
+    }));
+    savePromise.catch(() => res.status(400).json({ error: 'An error occured' }));
+    return res;
+  });
+};
+
+//Downvotes thread
+const downVote = (request, response) => changeVote(request, response, false);
+
+//Upvotes thread
+const upVote = (request, response) => changeVote(request, response, true);
+
+//Lists all threads
 const listThreads = (request, response) => {
   const res = response;
 
@@ -55,3 +95,5 @@ const listThreads = (request, response) => {
 module.exports.forumPage = forumPage;
 module.exports.listThreads = listThreads;
 module.exports.startThread = startThread;
+module.exports.upVote = upVote;
+module.exports.downVote = downVote;

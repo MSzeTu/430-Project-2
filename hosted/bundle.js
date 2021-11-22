@@ -111,7 +111,31 @@ var closeAd = function closeAd() {
 var openThread = function openThread(thread) {
   ReactDOM.render( /*#__PURE__*/React.createElement("div", {
     id: "currentThread"
-  }, /*#__PURE__*/React.createElement("h1", null, thread.title), /*#__PURE__*/React.createElement("h3", null, "OP: ", thread.ownerUser), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("p", null, thread.text)), document.querySelector("#openThread"));
+  }, /*#__PURE__*/React.createElement("h1", null, thread.title), /*#__PURE__*/React.createElement("h3", null, "OP: ", thread.ownerUser), /*#__PURE__*/React.createElement("h3", null, "Rating: ", thread.rating), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "voteButton",
+    onClick: function onClick() {
+      return upVote(thread, true);
+    }
+  }, "Upvote"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "voteButton",
+    onClick: function onClick() {
+      return downVote(thread, false);
+    }
+  }, "Downvote"), /*#__PURE__*/React.createElement("p", null, thread.text)), document.querySelector("#openThread"));
+};
+
+var upVote = function upVote(thread) {
+  sendAjax('GET', '/upVote', thread, function (threadReturned) {
+    openThread(threadReturned);
+  });
+};
+
+var downVote = function downVote(thread) {
+  sendAjax('GET', '/downVote', thread, function (threadReturned) {
+    openThread(threadReturned);
+  });
 };
 
 var setup = function setup(csrf) {

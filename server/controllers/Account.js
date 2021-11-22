@@ -2,16 +2,16 @@ const models = require('../models');
 
 const { Account } = models;
 
-const loginPage = (req, res) => {
+const loginPage = (req, res) => { //renders login page
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
-const logout = (req, res) => {
+const logout = (req, res) => { //logs user out
   req.session.destroy();
   res.redirect('/');
 };
 
-const login = (request, response) => {
+const login = (request, response) => { //Logs user in
   const req = request;
   const res = response;
 
@@ -34,7 +34,7 @@ const login = (request, response) => {
   });
 };
 
-const signup = (request, response) => {
+const signup = (request, response) => { //Makes a new account
   const req = request;
   const res = response;
 
@@ -51,6 +51,7 @@ const signup = (request, response) => {
     return res.status(400).json({ error: 'Passwords do not match!' });
   }
 
+  //Generate hash for account 
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
     const accountData = {
       username: req.body.username,
@@ -77,11 +78,12 @@ const signup = (request, response) => {
   });
 };
 
+//Changes user password by running authenticate and genHash
 const changePassword = (request, response) => {
   const req = request;
   const res = response;
 
-  //Cast to strings to check for sec flaws
+  // Cast to strings to check for sec flaws
   req.body.username = `${req.body.username}`;
   req.body.oldPass = `${req.body.oldPass}`;
   req.body.pass = `${req.body.pass}`;
@@ -111,13 +113,12 @@ const changePassword = (request, response) => {
         req.session.account = Account.AccountModel.toAPI(newAccount);
         return res.json({ redirect: '/forum' });
       });
-      savePromise.catch((err) => {
-        return res.status(400).json({ error: 'An error has occured' });
-      });
+      savePromise.catch(() => res.status(400).json({ error: 'An error has occured' }));
     });
   });
 };
 
+//Gets csrf token
 const getToken = (request, response) => {
   const req = request;
   const res = response;
@@ -128,9 +129,13 @@ const getToken = (request, response) => {
   res.json(csrfJSON);
 };
 
+//returns current username
 const returnUser = (request, response) => {
-  return response.json({username: request.session.account.username});
-}
+  const req = request;
+  const res = response;
+
+  res.json({ username: req.session.account.username });
+};
 
 module.exports.loginPage = loginPage;
 module.exports.login = login;

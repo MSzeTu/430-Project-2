@@ -6,6 +6,8 @@ const router = (app) => {
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
   app.get('/getUser', mid.requiresLogin, controllers.Account.returnUser);
+  app.get('/upVote', mid.requiresLogin, controllers.Forum.upVote);
+  app.get('/downVote', mid.requiresLogin, controllers.Forum.downVote);
   app.get('/getThreads', mid.requiresLogin, controllers.Forum.listThreads);
   app.post('/reset', mid.requiresSecure, mid.requiresLogout, controllers.Account.changePassword);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);

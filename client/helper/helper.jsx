@@ -1,12 +1,12 @@
-const handleError = (message) => {
+const handleError = (message) => { //Handles error messages
     alert(message);
 };
 
-const redirect = (response) => {
+const redirect = (response) => { //Redirects the user
     window.location = response.redirect;
 };
 
-const sendAjax = (type, action, data, success) => {
+const sendAjax = (type, action, data, success) => { //Sends Ajax requests
     $.ajax({
         cache: false,
         type: type,
