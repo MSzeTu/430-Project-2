@@ -13,6 +13,20 @@ const handleThread = (e) => { //Makes threads, refreshes them
     return false;
 };
 
+const handleComments = (e) => { //Makes comment, refreshes them
+    e.preventDefault();
+
+    if($("#commentText").val() == ''){
+        handleError("Comment must have text!")
+        return false;
+    }
+
+    /*sendAjax('POST', $("#commentForm").attr("action"), $("#commentForm").serialize(), function () {
+        loadComments();
+    }) */
+    return false;
+}
+
 const ThreadList = function (props) { //Lists out all active threads
     if (props.threads.length === 0) {
         return (
@@ -40,6 +54,30 @@ const ThreadList = function (props) { //Lists out all active threads
     )
 };
 
+const CommentList = function (props) { //Lists all comments of current thread
+    if (props.comments.length === 0) {
+        return (
+            <div className="commentList">
+                <h3 className="emptyThread">No Comments</h3>
+            </div>
+        );
+    }
+
+    const commentNodes = props.comments.map(function (comment) { //Indiviudal nodes
+        return (
+            <div key={comment._id} className="comment">
+                <p>{comment.text}</p>
+            </div>
+        )
+    });
+
+    return (
+        <div className="commentList">
+            {commentNodes}
+        </div>
+    )
+};
+
 const loadThreads = () => { //Loads up the threads
     sendAjax('GET', '/getThreads', null, (data) => {
         ReactDOM.render(
@@ -47,6 +85,14 @@ const loadThreads = () => { //Loads up the threads
         );
     });
 };
+
+const loadComments = () => { //Loads comments NOT COMPLETE MUST LOAD BASED ON OPEN THREAD
+    sendAjax('GET', '/getComments', null, (data) => {
+        ReactDOM.render(
+            <CommentList comments={data.comments}/>, document.querySelector("#comments")
+        );
+    });
+}
 
 const loadUser = () => { //Loads the current user so we can get their name
     sendAjax('GET', '/getUser', null, (data) => {
@@ -73,6 +119,23 @@ const ThreadForm = (props) => { //Form for creating threads
             <textarea id="threadText" id="textBox" name="text" placeholder="Thread Text" />
             <br></br>
             <input className="makeThreadSubmit" type="submit" value="Start Thread" />
+        </form>
+    );
+};
+
+const CommentForm = (props) => { //Form for creating comments
+    return (
+        <form id="commentForm"
+            onSubmit={handleComments}
+            name="commentForm"
+            action="/comment"
+            className="commentForm"
+        >
+            <label htmlFor="title">Title: </label>
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <textarea id="commentText" id="textBox" name="text" placeholder="Comment Here" />
+            <br></br>
+            <input className="makeCommentSubmit" type="submit" value="Comment" />
         </form>
     );
 };
@@ -128,13 +191,20 @@ const setup = function (csrf) { //Sets up the page
     ReactDOM.render(
         <ThreadForm csrf={csrf} />, document.querySelector("#startThread")
     );
-
+    
+    ReactDOM.render(
+        <CommentForm csrf={csrf} />, document.querySelector("#startComment")
+    );
+    
     ReactDOM.render(
         <ThreadList csrf={csrf} threads={[]} />, document.querySelector("#threads")
     );
     ReactDOM.render(
         <Advertisement />, document.querySelector(".serverAd")
     )
+    ReactDOM.render(
+        <CommentList csrf={csrf} comments={[]} />, document.querySelector("#comments")
+    );
     loadThreads();
     loadUser();
 };

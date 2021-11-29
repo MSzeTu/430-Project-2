@@ -1,10 +1,10 @@
 "use strict";
 
 var handleLogin = function handleLogin(e) {
-  e.preventDefault();
+  //Handles logins
+  e.preventDefault(); //Checks for empty fields
 
   if ($("user").val() == '' || $("#pass").val() == '') {
-    //Code here for empty error
     handleError("Username or password is empty");
     return false;
   }
@@ -14,16 +14,16 @@ var handleLogin = function handleLogin(e) {
 };
 
 var handleSignup = function handleSignup(e) {
+  //handles signups
   e.preventDefault();
 
   if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-    //Code here for fields missing error
     handleError("Missing Fields");
     return false;
-  }
+  } //checks for matching passwords
+
 
   if ($("#pass").val() !== $("#pass2").val()) {
-    //Code here for password not matching error
     handleError("Passwords do not match");
     return false;
   }
@@ -33,16 +33,16 @@ var handleSignup = function handleSignup(e) {
 };
 
 var handleReset = function handleReset(e) {
-  e.preventDefault();
+  //Handles password resets
+  e.preventDefault(); //Checks for empty fields
 
   if ($("#user").val() == '' || $("#oldPass").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-    //Code here for fields missing error
     handleError("Missing Fields");
     return false;
-  }
+  } //Checks for matching passwords
+
 
   if ($("#pass").val() !== $("#pass2").val()) {
-    //Code here for password not matching error
     handleError("Passwords do not match");
     return false;
   }
@@ -52,6 +52,7 @@ var handleReset = function handleReset(e) {
 };
 
 var LoginWindow = function LoginWindow(props) {
+  //Window for user login
   return /*#__PURE__*/React.createElement("form", {
     id: "loginForm",
     name: "loginForm",
@@ -85,6 +86,7 @@ var LoginWindow = function LoginWindow(props) {
 };
 
 var SignupWindow = function SignupWindow(props) {
+  //Window for signup
   return /*#__PURE__*/React.createElement("form", {
     id: "signupForm",
     name: "signupForm",
@@ -125,6 +127,7 @@ var SignupWindow = function SignupWindow(props) {
 };
 
 var PassWindow = function PassWindow(props) {
+  //Window for Password reset
   return /*#__PURE__*/React.createElement("form", {
     id: "passForm",
     name: "passForm",
@@ -172,24 +175,28 @@ var PassWindow = function PassWindow(props) {
 };
 
 var createLoginWindow = function createLoginWindow(csrf) {
+  //Creates login window
   ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
 };
 
 var createSignupWindow = function createSignupWindow(csrf) {
+  //Creates signup window
   ReactDOM.render( /*#__PURE__*/React.createElement(SignupWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
 };
 
 var createPassWindow = function createPassWindow(csrf) {
+  //creates password reset window
   ReactDOM.render( /*#__PURE__*/React.createElement(PassWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
 };
 
 var setup = function setup(csrf) {
+  //Sets up the page
   var loginButton = document.querySelector("#loginButton");
   var signupButtom = document.querySelector("#signupButton");
   var passButton = document.querySelector("#passButton");
@@ -207,25 +214,30 @@ var setup = function setup(csrf) {
 };
 
 var getToken = function getToken() {
+  //Gets CSRF token
   sendAjax('GET', '/getToken', null, function (result) {
     setup(result.csrfToken);
   });
 };
 
 $(document).ready(function () {
+  //runs on doc ready
   getToken();
 });
 "use strict";
 
 var handleError = function handleError(message) {
+  //Handles error messages
   alert(message);
 };
 
 var redirect = function redirect(response) {
+  //Redirects the user
   window.location = response.redirect;
 };
 
 var sendAjax = function sendAjax(type, action, data, success) {
+  //Sends Ajax requests
   $.ajax({
     cache: false,
     type: type,
