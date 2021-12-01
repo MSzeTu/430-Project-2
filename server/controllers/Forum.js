@@ -2,7 +2,7 @@ const models = require('../models');
 
 const { Thread } = models;
 
-//Renders the main forum page
+// Renders the main forum page
 const forumPage = (req, res) => {
   Thread.ThreadModel.getAll((err, docs) => {
     if (err) {
@@ -13,7 +13,7 @@ const forumPage = (req, res) => {
   });
 };
 
-//Creates a new thread
+// Creates a new thread
 const startThread = (req, res) => {
   if (!req.body.title || !req.body.text) {
     return res.status(400).json({ error: 'Thread name and content required' });
@@ -42,11 +42,57 @@ const startThread = (req, res) => {
   return threadPromise;
 };
 
-//Changes the vote on the open thread
+// Adds a comment to a thread
+const addComment = (req, res) => {
+  if (!req.body.text || req.body.thread === null) {
+    return res.status(400).json({ error: 'Comment text required and a thread must be selected' });
+  }
+
+  const commentData = {
+    text: req.body.text,
+    owner: req.session.account._id,
+    ownerUser: req.session.account.username,
+  };
+
+  const newComment = new Thread.CommentModel(commentData);
+
+  const commentPromise = newComment.save();
+  commentPromise.catch((err) => {
+    console.log(err);
+
+    return res.status(400).json({ error: 'An error occured' });
+  });
+  console.log(req.body.thread);
+  return Thread.ThreadModel.findByID(req.body.thread, (err, doc) => {
+    if (err) {
+      return res.status(500).json({ err });
+    }
+    if (!doc) {
+      return res.json({ error: 'Thread not found' });
+    }
+    const newThread = doc;
+    newThread.replies.push(newComment);
+    console.log('hello');
+    console.log(newThread);
+    const savePromise = newThread.save();
+    savePromise.then(() => res.json({
+      title: newThread.title,
+      text: newThread.text,
+      replies: newThread.replies,
+      rating: newThread.rating,
+      owner: newThread.owner,
+      ownerUser: newThread.ownerUser,
+    }));
+    savePromise.catch(() => res.status(400).json({ error: 'An error occured' }));
+    return res;
+  });
+};
+
+// Changes the vote on the open thread
 const changeVote = (request, response, voteType) => {
   const req = request;
   const res = response;
-  return Thread.ThreadModel.findByName(req.query.title, (err, doc) => {
+  return Thread.ThreadModel.findByID(req.query._id, (err, doc) => {
     if (err) {
       return res.status(500).json({ err });
     }
@@ -73,13 +119,13 @@ const changeVote = (request, response, voteType) => {
   });
 };
 
-//Downvotes thread
+// Downvotes thread
 const downVote = (request, response) => changeVote(request, response, false);
 
-//Upvotes thread
+// Upvotes thread
 const upVote = (request, response) => changeVote(request, response, true);
 
-//Lists all threads
+// Lists all threads
 const listThreads = (request, response) => {
   const res = response;
 
@@ -97,3 +143,4 @@ module.exports.listThreads = listThreads;
 module.exports.startThread = startThread;
 module.exports.upVote = upVote;
 module.exports.downVote = downVote;
+module.exports.addComment = addComment;

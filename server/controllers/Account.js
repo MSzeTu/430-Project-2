@@ -2,16 +2,16 @@ const models = require('../models');
 
 const { Account } = models;
 
-const loginPage = (req, res) => { //renders login page
+const loginPage = (req, res) => { // renders login page
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
-const logout = (req, res) => { //logs user out
+const logout = (req, res) => { // logs user out
   req.session.destroy();
   res.redirect('/');
 };
 
-const login = (request, response) => { //Logs user in
+const login = (request, response) => { // Logs user in
   const req = request;
   const res = response;
 
@@ -34,7 +34,7 @@ const login = (request, response) => { //Logs user in
   });
 };
 
-const signup = (request, response) => { //Makes a new account
+const signup = (request, response) => { // Makes a new account
   const req = request;
   const res = response;
 
@@ -51,7 +51,7 @@ const signup = (request, response) => { //Makes a new account
     return res.status(400).json({ error: 'Passwords do not match!' });
   }
 
-  //Generate hash for account 
+  // Generate hash for account
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
     const accountData = {
       username: req.body.username,
@@ -78,7 +78,7 @@ const signup = (request, response) => { //Makes a new account
   });
 };
 
-//Changes user password by running authenticate and genHash
+// Changes user password by running authenticate and genHash
 const changePassword = (request, response) => {
   const req = request;
   const res = response;
@@ -118,7 +118,7 @@ const changePassword = (request, response) => {
   });
 };
 
-//Gets csrf token
+// Gets csrf token
 const getToken = (request, response) => {
   const req = request;
   const res = response;
@@ -129,7 +129,7 @@ const getToken = (request, response) => {
   res.json(csrfJSON);
 };
 
-//returns current username
+// returns current username
 const returnUser = (request, response) => {
   const req = request;
   const res = response;
