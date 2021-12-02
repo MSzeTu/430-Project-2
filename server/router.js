@@ -14,6 +14,7 @@ const router = (app) => {
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
   app.get('/forum', mid.requiresLogin, controllers.Forum.forumPage);
   app.post('/forum', mid.requiresLogin, controllers.Forum.startThread);
+  app.post('/comment', mid.requiresLogin, controllers.Forum.addComment);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

@@ -78,6 +78,14 @@ ThreadSchema.statics.findByName = (title, callback) => {
   return ThreadModel.findOne(search).exec(callback);
 };
 
+// Gets a thread by id
+ThreadSchema.statics.findByID = (_id, callback) => {
+  const search = {
+    _id,
+  };
+  return ThreadModel.findOne(search).exec(callback);
+};
+
 // Deletes a thread (not implemented)
 ThreadSchema.statics.delete = (namef, callback) => { // Calls the delete function
   ThreadModel.deleteOne({ name: namef }).exec(callback);

@@ -1,3 +1,5 @@
+let currentT; 
+
 const handleThread = (e) => { //Makes threads, refreshes them
     e.preventDefault();
 
@@ -15,15 +17,15 @@ const handleThread = (e) => { //Makes threads, refreshes them
 
 const handleComments = (e) => { //Makes comment, refreshes them
     e.preventDefault();
-
+    document.querySelector("#currentTinForm").value = currentT._id;
     if($("#commentText").val() == ''){
         handleError("Comment must have text!")
         return false;
     }
 
-    /*sendAjax('POST', $("#commentForm").attr("action"), $("#commentForm").serialize(), function () {
-        loadComments();
-    }) */
+    sendAjax('POST', $("#commentForm").attr("action"), $("#commentForm").serialize(), function () {
+        //loadComments();
+    }) 
     return false;
 }
 
@@ -133,6 +135,7 @@ const CommentForm = (props) => { //Form for creating comments
         >
             <label htmlFor="title">Title: </label>
             <input type="hidden" name="_csrf" value={props.csrf} />
+            <input id="currentTinForm" type="hidden" name="thread" value={currentT} />
             <textarea id="commentText" id="textBox" name="text" placeholder="Comment Here" />
             <br></br>
             <input className="makeCommentSubmit" type="submit" value="Comment" />
@@ -157,6 +160,7 @@ const closeAd = function (){ //Closes the ad
 }
 
 const openThread = function (thread) { //Opens the selected thread
+    currentT = thread;
     ReactDOM.render(
         <div id="currentThread">
             <h1>{thread.title}</h1>

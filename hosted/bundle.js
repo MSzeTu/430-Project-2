@@ -2,6 +2,8 @@
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var currentT;
+
 var handleThread = function handleThread(e) {
   //Makes threads, refreshes them
   e.preventDefault();
@@ -20,16 +22,15 @@ var handleThread = function handleThread(e) {
 var handleComments = function handleComments(e) {
   //Makes comment, refreshes them
   e.preventDefault();
+  document.querySelector("#currentTinForm").value = currentT._id;
 
   if ($("#commentText").val() == '') {
     handleError("Comment must have text!");
     return false;
   }
-  /*sendAjax('POST', $("#commentForm").attr("action"), $("#commentForm").serialize(), function () {
-      loadComments();
-  }) */
 
-
+  sendAjax('POST', $("#commentForm").attr("action"), $("#commentForm").serialize(), function () {//loadComments();
+  });
   return false;
 };
 
@@ -158,6 +159,11 @@ var CommentForm = function CommentForm(props) {
     type: "hidden",
     name: "_csrf",
     value: props.csrf
+  }), /*#__PURE__*/React.createElement("input", {
+    id: "currentTinForm",
+    type: "hidden",
+    name: "thread",
+    value: currentT
   }), /*#__PURE__*/React.createElement("textarea", (_React$createElement2 = {
     id: "commentText"
   }, _defineProperty(_React$createElement2, "id", "textBox"), _defineProperty(_React$createElement2, "name", "text"), _defineProperty(_React$createElement2, "placeholder", "Comment Here"), _React$createElement2)), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
@@ -189,6 +195,7 @@ var closeAd = function closeAd() {
 
 var openThread = function openThread(thread) {
   //Opens the selected thread
+  currentT = thread;
   ReactDOM.render( /*#__PURE__*/React.createElement("div", {
     id: "currentThread"
   }, /*#__PURE__*/React.createElement("h1", null, thread.title), /*#__PURE__*/React.createElement("h3", null, "OP: ", thread.ownerUser), /*#__PURE__*/React.createElement("h3", null, "Rating: ", thread.rating), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("button", {
