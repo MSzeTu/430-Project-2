@@ -8,7 +8,7 @@ let CommentModel = {};
 
 const convertId = mongoose.Types.ObjectId;
 
-//Schema for comments
+// Schema for comments
 const CommentSchema = new mongoose.Schema({
   text: {
     type: String,
@@ -25,7 +25,7 @@ const CommentSchema = new mongoose.Schema({
   },
 });
 
-//Schema for Threads
+// Schema for Threads
 const ThreadSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -56,7 +56,7 @@ const ThreadSchema = new mongoose.Schema({
   },
 });
 
-//Finds Thread by owners
+// Finds Thread by owners
 ThreadSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId),
@@ -65,12 +65,12 @@ ThreadSchema.statics.findByOwner = (ownerId, callback) => {
   return ThreadModel.find(search).select('name text').lean().exec(callback);
 };
 
-//Gets all threads
+// Gets all threads
 ThreadSchema.statics.getAll = (callback) => {
   ThreadModel.find(callback).lean();
 };
 
-//Gets a thread by name
+// Gets a thread by name
 ThreadSchema.statics.findByName = (title, callback) => {
   const search = {
     title,
@@ -78,7 +78,7 @@ ThreadSchema.statics.findByName = (title, callback) => {
   return ThreadModel.findOne(search).exec(callback);
 };
 
-//Deletes a thread (not implemented)
+// Deletes a thread (not implemented)
 ThreadSchema.statics.delete = (namef, callback) => { // Calls the delete function
   ThreadModel.deleteOne({ name: namef }).exec(callback);
 };

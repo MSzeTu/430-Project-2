@@ -2,7 +2,7 @@ const models = require('../models');
 
 const { Thread } = models;
 
-//Renders the main forum page
+// Renders the main forum page
 const forumPage = (req, res) => {
   Thread.ThreadModel.getAll((err, docs) => {
     if (err) {
@@ -13,7 +13,7 @@ const forumPage = (req, res) => {
   });
 };
 
-//Creates a new thread
+// Creates a new thread
 const startThread = (req, res) => {
   if (!req.body.title || !req.body.text) {
     return res.status(400).json({ error: 'Thread name and content required' });
@@ -42,7 +42,7 @@ const startThread = (req, res) => {
   return threadPromise;
 };
 
-//Changes the vote on the open thread
+// Changes the vote on the open thread
 const changeVote = (request, response, voteType) => {
   const req = request;
   const res = response;
@@ -73,13 +73,13 @@ const changeVote = (request, response, voteType) => {
   });
 };
 
-//Downvotes thread
+// Downvotes thread
 const downVote = (request, response) => changeVote(request, response, false);
 
-//Upvotes thread
+// Upvotes thread
 const upVote = (request, response) => changeVote(request, response, true);
 
-//Lists all threads
+// Lists all threads
 const listThreads = (request, response) => {
   const res = response;
 
