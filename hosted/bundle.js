@@ -3,6 +3,8 @@
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var currentT;
+var threadFormUp;
+var commentFormUp;
 
 var handleThread = function handleThread(e) {
   //Makes threads, refreshes them
@@ -29,9 +31,17 @@ var handleComments = function handleComments(e) {
     return false;
   }
 
-  sendAjax('POST', $("#commentForm").attr("action"), $("#commentForm").serialize(), function () {//loadComments();
+  sendAjax('POST', $("#commentForm").attr("action"), $("#commentForm").serialize(), function () {
+    loadComments();
   });
   return false;
+};
+
+var getThread = function getThread() {
+  //Not currently using this. Something with async functions or something
+  sendAjax('GET', '/getC', currentT, function (data) {
+    currentT = data.thread;
+  });
 };
 
 var ThreadList = function ThreadList(props) {
@@ -64,24 +74,11 @@ var ThreadList = function ThreadList(props) {
 
 var CommentList = function CommentList(props) {
   //Lists all comments of current thread
-  if (props.comments.length === 0) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "commentList"
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: "emptyThread"
-    }, "No Comments"));
-  }
-
-  var commentNodes = props.comments.map(function (comment) {
-    //Indiviudal nodes
-    return /*#__PURE__*/React.createElement("div", {
-      key: comment._id,
-      className: "comment"
-    }, /*#__PURE__*/React.createElement("p", null, comment.text));
-  });
   return /*#__PURE__*/React.createElement("div", {
     className: "commentList"
-  }, commentNodes);
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "emptyThread"
+  }, "No Comments"));
 };
 
 var loadThreads = function loadThreads() {
@@ -94,11 +91,20 @@ var loadThreads = function loadThreads() {
 };
 
 var loadComments = function loadComments() {
-  //Loads comments NOT COMPLETE MUST LOAD BASED ON OPEN THREAD
-  sendAjax('GET', '/getComments', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(CommentList, {
-      comments: data.comments
-    }), document.querySelector("#comments"));
+  sendAjax('GET', '/getC', currentT, function (data) {
+    if (currentT.replies !== data.replies) {
+      //Only load if there are new comments
+      document.querySelector("#comments").innerHTML = "";
+
+      if (currentT.replies.length === 0) {
+        $("<h3 class=\"emptyThread\" />").text("No Comments").appendTo(document.querySelector('#comments'));
+        return;
+      }
+
+      for (var i = 0; i < data.thread.replies.length; i++) {
+        $("<div class=\"comment\" />").text("".concat(data.thread.replies[i].text, " - ").concat(data.thread.replies[i].ownerUser)).appendTo(document.querySelector('#comments'));
+      }
+    }
   });
 };
 
@@ -123,9 +129,13 @@ var ThreadForm = function ThreadForm(props) {
     name: "threadForm",
     action: "/forum",
     className: "threadForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "title"
-  }, "Title: "), /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    id: "threadMover",
+    onClick: function onClick() {
+      return moveForm("thread");
+    }
+  }, "Start a Thread"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     id: "threadTitle",
     type: "text",
     name: "title",
@@ -153,9 +163,13 @@ var CommentForm = function CommentForm(props) {
     name: "commentForm",
     action: "/comment",
     className: "commentForm"
-  }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "title"
-  }, "Title: "), /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    id: "threadMover",
+    onClick: function onClick() {
+      return moveForm("comment");
+    }
+  }, "Write a Comment"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "_csrf",
     value: props.csrf
@@ -193,6 +207,35 @@ var closeAd = function closeAd() {
   }, 600);
 };
 
+var moveForm = function moveForm(form) {
+  //Moves a form
+  if (form === "thread") {
+    if (threadFormUp === true) {
+      $('#startThread').animate({
+        bottom: "-580px"
+      }, 600);
+      threadFormUp = false;
+    } else {
+      $('#startThread').animate({
+        bottom: "-10px"
+      }, 600);
+      threadFormUp = true;
+    }
+  } else {
+    if (commentFormUp === true) {
+      $('#startComment').animate({
+        bottom: "-560px"
+      }, 600);
+      commentFormUp = false;
+    } else {
+      $('#startComment').animate({
+        bottom: "-10px"
+      }, 600);
+      commentFormUp = true;
+    }
+  }
+};
+
 var openThread = function openThread(thread) {
   //Opens the selected thread
   currentT = thread;
@@ -200,17 +243,18 @@ var openThread = function openThread(thread) {
     id: "currentThread"
   }, /*#__PURE__*/React.createElement("h1", null, thread.title), /*#__PURE__*/React.createElement("h3", null, "OP: ", thread.ownerUser), /*#__PURE__*/React.createElement("h3", null, "Rating: ", thread.rating), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("button", {
     type: "button",
-    className: "voteButton",
+    id: "upButton",
     onClick: function onClick() {
       return upVote(thread, true);
     }
   }, "Upvote"), /*#__PURE__*/React.createElement("button", {
     type: "button",
-    className: "voteButton",
+    id: "downButton",
     onClick: function onClick() {
       return downVote(thread, false);
     }
   }, "Downvote"), /*#__PURE__*/React.createElement("p", null, thread.text)), document.querySelector("#openThread"));
+  loadComments();
 };
 
 var upVote = function upVote(thread) {
@@ -261,6 +305,8 @@ $(document).ready(function () {
   $('.serverad').delay(3000).animate({
     bottom: "30px"
   }, 600);
+  commentFormUp = false;
+  threadFormUp = false;
 });
 "use strict";
 

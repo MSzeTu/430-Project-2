@@ -82,11 +82,21 @@ const addComment = (req, res) => {
       rating: newThread.rating,
       owner: newThread.owner,
       ownerUser: newThread.ownerUser,
+      _id: newThread._id,
     }));
     savePromise.catch(() => res.status(400).json({ error: 'An error occured' }));
     return res;
   });
 };
+
+// Gets comments from open thread
+const getCurrent = (req, res) => Thread.ThreadModel.findByID(req.query._id, (err, docs) => {
+  if (err) {
+    console.log(err);
+    return res.status(400).json({ error: 'An Error occured' });
+  }
+  return res.json({ thread: docs });
+});
 
 // Changes the vote on the open thread
 const changeVote = (request, response, voteType) => {
@@ -97,7 +107,10 @@ const changeVote = (request, response, voteType) => {
       return res.status(500).json({ err });
     }
     if (!doc) {
-      return res.json({ error: 'Thread not found' });
+      return res.status(400).json({ error: 'Thread not found' });
+    }
+    if (doc.raters.includes(req.session.account._id)) {
+      return res.status(400).json({ error: 'You have already voted on this post.' });
     }
     const newThread = doc;
     if (voteType === true) {
@@ -105,6 +118,7 @@ const changeVote = (request, response, voteType) => {
     } else {
       newThread.rating--;
     }
+    newThread.raters.push(req.session.account._id);
     const savePromise = newThread.save();
     savePromise.then(() => res.json({
       title: newThread.title,
@@ -113,6 +127,7 @@ const changeVote = (request, response, voteType) => {
       rating: newThread.rating,
       owner: newThread.owner,
       ownerUser: newThread.ownerUser,
+      _id: newThread._id,
     }));
     savePromise.catch(() => res.status(400).json({ error: 'An error occured' }));
     return res;
@@ -144,3 +159,4 @@ module.exports.startThread = startThread;
 module.exports.upVote = upVote;
 module.exports.downVote = downVote;
 module.exports.addComment = addComment;
+module.exports.getCurrent = getCurrent;
