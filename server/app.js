@@ -14,7 +14,7 @@ const url = require('url');
 const redis = require('redis');
 const csrf = require('csurf');
 
-// const port = process.env.PORT || process.env.NODE_PORT || 3000;
+const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/FakeReddit';
 
@@ -115,8 +115,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+server.listen(port, () => {
+  console.log(`listening on ${port}`);
 });
 
 /* app.listen(port, (err) => {
