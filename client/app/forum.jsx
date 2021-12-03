@@ -22,7 +22,7 @@ socket.on('new thread', function() {
     loadThreads();
 });
 
-socket.on('new comment', function(){
+socket.on('new comment', function() {
     console.log("socket.on works");
     loadComments();
 });
@@ -40,12 +40,6 @@ const handleComments = (e) => { //Makes comment, refreshes them
     })
     return false;
 }
-
-const getThread = () => { //Not currently using this. Something with async functions or something
-    sendAjax('GET', '/getC', currentT, (data) => {
-        currentT = data.thread;
-    });
-};
 
 const ThreadList = function (props) { //Lists out all active threads
     if (props.threads.length === 0) {
@@ -92,9 +86,11 @@ const loadThreads = () => { //Loads up the threads
 
 const loadComments = () => {
     sendAjax('GET', '/getC', currentT, (data) => {
-        if (currentT.replies !== data.replies) { //Only load if there are new comments
+        console.log(data.thread.replies);
+        console.log(currentT.replies);
+        if (currentT.replies !== data.thread.replies) { //Only load if there are new comments
             document.querySelector("#comments").innerHTML = "";
-            if(currentT.replies.length === 0){
+            if(data.thread.replies.length === 0){
                 $(`<h3 class="emptyThread" />`).text(`No Comments`)
                 .appendTo(document.querySelector('#comments'));
                 return;
@@ -151,9 +147,9 @@ const CommentForm = (props) => { //Form for creating comments
             <br></br>
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input id="currentTinForm" type="hidden" name="thread" value={currentT} />
-            <textarea id="commentText" id="textBox" name="text" placeholder="Comment Here" />
+            <textarea id="commentText" id="commentBox" name="text" placeholder="Select a Thread" disabled={true}/>
             <br></br>
-            <input className="makeCommentSubmit" type="submit" value="Comment" />
+            <input className="makeCommentSubmit" type="submit" value="Comment" disabled={true} />
         </form>
     );
 };
@@ -217,6 +213,9 @@ const openThread = function (thread) { //Opens the selected thread
             <p>{thread.text}</p>
         </div>, document.querySelector("#openThread")
     )
+    document.querySelector("#commentBox").disabled = false;
+    document.querySelector("#commentBox").placeholder = "Write a comment!";
+    document.querySelector(".makeCommentSubmit").disabled = false;
     loadComments();
 };
 

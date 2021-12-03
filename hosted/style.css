@@ -157,12 +157,13 @@ nav:nth-child(1) {
 textarea{
     border: 2px solid black;
     border-radius: 4px;
+    background-color: white;
 }
 #threadMover:hover {
     background-color:blue
   }
 
-#textBox {
+#textBox, #commentBox{
     height: 500;
     width: 250;
 }

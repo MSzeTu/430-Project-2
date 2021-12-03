@@ -48,6 +48,9 @@ const ThreadSchema = new mongoose.Schema({
   raters: {
     type: [String],
   },
+  ratings: {
+    type: [Boolean],
+  },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,

@@ -47,13 +47,6 @@ var handleComments = function handleComments(e) {
   return false;
 };
 
-var getThread = function getThread() {
-  //Not currently using this. Something with async functions or something
-  sendAjax('GET', '/getC', currentT, function (data) {
-    currentT = data.thread;
-  });
-};
-
 var ThreadList = function ThreadList(props) {
   //Lists out all active threads
   if (props.threads.length === 0) {
@@ -102,11 +95,14 @@ var loadThreads = function loadThreads() {
 
 var loadComments = function loadComments() {
   sendAjax('GET', '/getC', currentT, function (data) {
-    if (currentT.replies !== data.replies) {
+    console.log(data.thread.replies);
+    console.log(currentT.replies);
+
+    if (currentT.replies !== data.thread.replies) {
       //Only load if there are new comments
       document.querySelector("#comments").innerHTML = "";
 
-      if (currentT.replies.length === 0) {
+      if (data.thread.replies.length === 0) {
         $("<h3 class=\"emptyThread\" />").text("No Comments").appendTo(document.querySelector('#comments'));
         return;
       }
@@ -190,10 +186,11 @@ var CommentForm = function CommentForm(props) {
     value: currentT
   }), /*#__PURE__*/React.createElement("textarea", (_React$createElement2 = {
     id: "commentText"
-  }, _defineProperty(_React$createElement2, "id", "textBox"), _defineProperty(_React$createElement2, "name", "text"), _defineProperty(_React$createElement2, "placeholder", "Comment Here"), _React$createElement2)), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+  }, _defineProperty(_React$createElement2, "id", "commentBox"), _defineProperty(_React$createElement2, "name", "text"), _defineProperty(_React$createElement2, "placeholder", "Select a Thread"), _defineProperty(_React$createElement2, "disabled", true), _React$createElement2)), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     className: "makeCommentSubmit",
     type: "submit",
-    value: "Comment"
+    value: "Comment",
+    disabled: true
   }));
 };
 
@@ -264,6 +261,9 @@ var openThread = function openThread(thread) {
       return downVote(thread, false);
     }
   }, "Downvote"), /*#__PURE__*/React.createElement("p", null, thread.text)), document.querySelector("#openThread"));
+  document.querySelector("#commentBox").disabled = false;
+  document.querySelector("#commentBox").placeholder = "Write a comment!";
+  document.querySelector(".makeCommentSubmit").disabled = false;
   loadComments();
 };
 

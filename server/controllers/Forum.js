@@ -107,7 +107,34 @@ const changeVote = (request, response, voteType) => {
       return res.status(400).json({ error: 'Thread not found' });
     }
     if (doc.raters.includes(req.session.account._id)) {
-      return res.status(400).json({ error: 'You have already voted on this post.' });
+      const pos = doc.raters.indexOf(req.session.account._id);
+
+      if (doc.ratings[pos] === voteType) {
+        return res.status(400).json({ error: 'You cannot double-vote a post.' });
+      }
+
+      const newThread = doc;
+
+      if (voteType === true) {
+        newThread.rating++;
+      } else {
+        newThread.rating--;
+      }
+
+      newThread.ratings[pos] = voteType;
+
+      const savePromise = newThread.save();
+      savePromise.then(() => res.json({
+        title: newThread.title,
+        text: newThread.text,
+        replies: newThread.replies,
+        rating: newThread.rating,
+        owner: newThread.owner,
+        ownerUser: newThread.ownerUser,
+        _id: newThread._id,
+      }));
+      savePromise.catch(() => res.status(400).json({ error: 'An error occured' }));
+      return res;
     }
     const newThread = doc;
     if (voteType === true) {
@@ -116,6 +143,7 @@ const changeVote = (request, response, voteType) => {
       newThread.rating--;
     }
     newThread.raters.push(req.session.account._id);
+    newThread.ratings.push(voteType);
     const savePromise = newThread.save();
     savePromise.then(() => res.json({
       title: newThread.title,
