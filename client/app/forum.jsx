@@ -1,6 +1,7 @@
 let currentT;
 let threadFormUp;
 let commentFormUp;
+let socket = io(); //Used for Socket.io stuff
 
 const handleThread = (e) => { //Makes threads, refreshes them
     e.preventDefault();
@@ -11,11 +12,20 @@ const handleThread = (e) => { //Makes threads, refreshes them
     }
 
     sendAjax('POST', $("#threadForm").attr("action"), $("#threadForm").serialize(), function () {
-        loadThreads();
+        socket.emit('new thread'); //Emits the new thread, which will call loadthreads for all users
     })
-
     return false;
 };
+
+//socket.io capture
+socket.on('new thread', function() {
+    loadThreads();
+});
+
+socket.on('new comment', function(){
+    console.log("socket.on works");
+    loadComments();
+});
 
 const handleComments = (e) => { //Makes comment, refreshes them
     e.preventDefault();
@@ -26,7 +36,7 @@ const handleComments = (e) => { //Makes comment, refreshes them
     }
 
     sendAjax('POST', $("#commentForm").attr("action"), $("#commentForm").serialize(), function () {
-        loadComments();
+        socket.emit('new comment'); //Emits the new comment, which will call loadComments for all users
     })
     return false;
 }

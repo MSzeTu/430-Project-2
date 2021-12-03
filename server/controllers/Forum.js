@@ -62,7 +62,6 @@ const addComment = (req, res) => {
 
     return res.status(400).json({ error: 'An error occured' });
   });
-  console.log(req.body.thread);
   return Thread.ThreadModel.findByID(req.body.thread, (err, doc) => {
     if (err) {
       return res.status(500).json({ err });
@@ -72,8 +71,6 @@ const addComment = (req, res) => {
     }
     const newThread = doc;
     newThread.replies.push(newComment);
-    console.log('hello');
-    console.log(newThread);
     const savePromise = newThread.save();
     savePromise.then(() => res.json({
       title: newThread.title,

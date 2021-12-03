@@ -1,5 +1,8 @@
 const path = require('path');
 const express = require('express');
+// socket stuff
+const http = require('http');
+
 const compression = require('compression');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
@@ -11,7 +14,7 @@ const url = require('url');
 const redis = require('redis');
 const csrf = require('csurf');
 
-const port = process.env.PORT || process.env.NODE_PORT || 3000;
+// const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/FakeReddit';
 
@@ -40,11 +43,16 @@ const redisClient = redis.createClient({
   password: redisPASS,
 });
 
+const app = express();
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+
+const io = new Server(server);
+
 // pull in our routes
 const bodyParser = require('body-parser');
 const router = require('./router.js');
 
-const app = express();
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
 app.use(compression());
@@ -72,6 +80,7 @@ app.disable('x-powered-by');
 app.use(cookieParser());
 
 // Must come after app.use session and app.use(cookieParser), but before router
+
 app.use(csrf());
 app.use((err, req, res, next) => {
   if (err.code !== 'EBADCSRFTOKEN') return next(err);
@@ -81,9 +90,38 @@ app.use((err, req, res, next) => {
 });
 router(app);
 
-app.listen(port, (err) => {
+// Socket IO stuff
+/* Current issues:
+  Cannot actually have more than one user logged in. Not sure if this is a CSRF
+    issue or something else.
+
+  Trying to run things with two different users logged in requires CSRF
+
+  Refreshing a page while logged in as one user sets another page to that user
+*/
+
+// Receive and emit
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+  socket.on('new thread', () => {
+    io.emit('new thread');
+  });
+  socket.on('new comment', () => {
+    console.log('socket.on in app.js works');
+    io.emit('new comment');
+  });
+});
+
+server.listen(3000, () => {
+  console.log('listening on *:3000');
+});
+
+/* app.listen(port, (err) => {
   if (err) {
     throw err;
   }
   console.log(`Listening on port ${port}`);
-});
+}); */
