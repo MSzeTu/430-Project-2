@@ -17,6 +17,7 @@ const router = (app) => {
   app.post('/comment', mid.requiresLogin, controllers.Forum.addComment);
   app.get('/getC', mid.requiresLogin, controllers.Forum.getCurrent);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+  app.get('/*', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 
 module.exports = router;

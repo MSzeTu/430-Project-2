@@ -93,6 +93,7 @@ var loadThreads = function loadThreads() {
 };
 
 var loadComments = function loadComments() {
+  //Loads up the comments
   sendAjax('GET', '/getC', currentT, function (data) {
     if (currentT.replies !== data.thread.replies) {
       //Only load if there are new comments
