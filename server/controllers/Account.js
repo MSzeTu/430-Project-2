@@ -1,3 +1,4 @@
+//The majority of this page is from DomoMaker
 const models = require('../models');
 
 const { Account } = models;
