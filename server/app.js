@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+
 // socket stuff
 const http = require('http');
 
@@ -91,14 +92,6 @@ app.use((err, req, res, next) => {
 router(app);
 
 // Socket IO stuff
-/* Current issues:
-  Cannot actually have more than one user logged in. Not sure if this is a CSRF
-    issue or something else.
-
-  Trying to run things with two different users logged in requires CSRF
-
-  Refreshing a page while logged in as one user sets another page to that user
-*/
 
 // Receive and emit
 io.on('connection', (socket) => {
@@ -110,7 +103,6 @@ io.on('connection', (socket) => {
     io.emit('new thread');
   });
   socket.on('new comment', () => {
-    console.log('socket.on in app.js works');
     io.emit('new comment');
   });
 });
@@ -119,6 +111,7 @@ server.listen(port, () => {
   console.log(`listening on ${port}`);
 });
 
+// Leftovers from original use
 /* app.listen(port, (err) => {
   if (err) {
     throw err;

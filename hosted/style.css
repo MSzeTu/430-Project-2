@@ -4,6 +4,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    font-family: 'Merriweather', serif;
 }
 
 #grid{
@@ -108,6 +109,7 @@ nav:nth-child(1) {
     padding: 10px 20px;
     text-align: center;
     font-size: 13px;
+    font-family: 'Merriweather', serif;
     transition-duration: 0.4s;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }

@@ -99,17 +99,18 @@ const getCurrent = (req, res) => Thread.ThreadModel.findByID(req.query._id, (err
 const changeVote = (request, response, voteType) => {
   const req = request;
   const res = response;
+  // Finds by id so we can change vote
   return Thread.ThreadModel.findByID(req.query._id, (err, doc) => {
-    if (err) {
+    if (err) { // Error drop
       return res.status(500).json({ err });
     }
-    if (!doc) {
+    if (!doc) { // Drop if not found
       return res.status(400).json({ error: 'Thread not found' });
     }
-    if (doc.raters.includes(req.session.account._id)) {
+    if (doc.raters.includes(req.session.account._id)) { // handle re-voting
       const pos = doc.raters.indexOf(req.session.account._id);
 
-      if (doc.ratings[pos] === voteType) {
+      if (doc.ratings[pos] === voteType) { // Drop if user is trying to double-vote
         return res.status(400).json({ error: 'You cannot double-vote a post.' });
       }
 
@@ -136,6 +137,7 @@ const changeVote = (request, response, voteType) => {
       savePromise.catch(() => res.status(400).json({ error: 'An error occured' }));
       return res;
     }
+    // Handle first-time vote
     const newThread = doc;
     if (voteType === true) {
       newThread.rating++;

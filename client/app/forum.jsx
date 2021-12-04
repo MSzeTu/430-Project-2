@@ -23,7 +23,6 @@ socket.on('new thread', function() {
 });
 
 socket.on('new comment', function() {
-    console.log("socket.on works");
     loadComments();
 });
 
@@ -84,10 +83,8 @@ const loadThreads = () => { //Loads up the threads
     });
 };
 
-const loadComments = () => {
+const loadComments = () => { //Loads up the comments
     sendAjax('GET', '/getC', currentT, (data) => {
-        console.log(data.thread.replies);
-        console.log(currentT.replies);
         if (currentT.replies !== data.thread.replies) { //Only load if there are new comments
             document.querySelector("#comments").innerHTML = "";
             if(data.thread.replies.length === 0){

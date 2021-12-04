@@ -27,7 +27,6 @@ socket.on('new thread', function () {
   loadThreads();
 });
 socket.on('new comment', function () {
-  console.log("socket.on works");
   loadComments();
 });
 
@@ -95,9 +94,6 @@ var loadThreads = function loadThreads() {
 
 var loadComments = function loadComments() {
   sendAjax('GET', '/getC', currentT, function (data) {
-    console.log(data.thread.replies);
-    console.log(currentT.replies);
-
     if (currentT.replies !== data.thread.replies) {
       //Only load if there are new comments
       document.querySelector("#comments").innerHTML = "";
